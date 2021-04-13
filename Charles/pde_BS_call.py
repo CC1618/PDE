@@ -97,24 +97,26 @@ class PDEBSPricing():
 
 if __name__=='__main__':
     scheme = 'implicit'
-    I = 60
-    J = 60
-    r = .03
+    I = 200
+    J = 200
+    r = 0
     σ = .2
     K = 100
     T = 1
     s0 = 100
     pK = .0
-    t1 = .5
+    t1 = 0
     pde = PDEBSPricing(I, J, scheme)
 
+    print('grid size: %s x %s, scheme: %s'%(I, J, scheme))
+
     p = pde.price_call(s0, K, T, r, σ, t=0)
-    print('Vanilla Call: ', p)
+    print('BS Vanilla Call: ',  '%.2f'%p)
 
-    #p = pde.price_fwd_call(s0, pK, t1, T, r, σ)
-    #print('Forward Call: ', p)
+    p = pde.price_fwd_call(s0, pK, t1, T, r, σ)
+    print('BS Forward Call: ',  '%.2f'%p)
 
-
+    '''
     p = []
     for t1 in range(0, 100, 10):
         t1 /= 100
@@ -122,3 +124,4 @@ if __name__=='__main__':
     print(p)
     plt.plot(p)
     plt.show()
+    '''

@@ -16,7 +16,7 @@ class MonteCarloPricing():
             s[i] = s[i-1] * ( 1 + r * dt + σ * np.sqrt(dt) * N)
         return s
 
-    def gen_Hn_prices(self, s0, r, v0, κ, θ, γ, ρ, T, t=0, **kwargs):
+    def gen_Hn_prices(self, s0, r, v0, κ, θ, σ, ρ, T, t=0, **kwargs):
         dt, nd =(T - t) / self.M, (T - t) * self.M
         v = np.zeros(nd)
         v[0] = v0
@@ -26,7 +26,7 @@ class MonteCarloPricing():
             Nv = np.random.normal()
             Nx = np.random.normal()
             Ns = ρ * Nv + np.sqrt(1 - ρ**2) * Nx
-            v[t] = v[t-1] + κ * (θ - v[t-1]) * dt + γ*np.sqrt(v[t-1]*dt)*Nv
+            v[t] = v[t-1] + κ * (θ - v[t-1]) * dt + σ*np.sqrt(v[t-1]*dt)*Nv
             s[t] = s[t-1] * (1 + r * dt + np.sqrt(v[t-1] * dt) * Ns)
         return s
 
@@ -77,7 +77,7 @@ if __name__ == '__main__':
     v0 = .04     # Initial Variance
     κ  = 0       # Mean reversion factor of the variance
     θ  = .04       # Mean of the variance
-    γ  = 0      # Volatility of the variance
+    σ  = 0      # Volatility of the variance
     ρ  = -.7      # Leverage factor
 
     ########### Option Types ###########
@@ -101,7 +101,7 @@ if __name__ == '__main__':
 
     ## Heston
     gen_fct = mc.gen_Hn_prices
-    x = mc.price(gen_fct, payoff_fct, s0=s0, r=r, v0=v0, κ=κ, θ=θ, γ=γ, ρ=ρ, T=T, K=K)
+    x = mc.price(gen_fct, payoff_fct, s0=s0, r=r, v0=v0, κ=κ, θ=θ, σ=σ, ρ=ρ, T=T, K=K)
     print('\t Heston: ', x)
 
 
@@ -116,5 +116,5 @@ if __name__ == '__main__':
 
     ## Heston
     #gen_fct = mc.gen_Hn_prices
-    #x = mc.price(gen_fct, payoff_fct, s0=s0, r=r, v0=v0, κ=κ, θ=θ, γ=γ, ρ=ρ, T=T, τ=τ, pK=pK)
+    #x = mc.price(gen_fct, payoff_fct, s0=s0, r=r, v0=v0, κ=κ, θ=θ, σ=σ, ρ=ρ, T=T, τ=τ, pK=pK)
     #print('\t Heston: ', x)

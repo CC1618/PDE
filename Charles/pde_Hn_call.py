@@ -1,7 +1,5 @@
 import numpy as np
 
-
-
 class PDEHnPricing():
     def __init__(self, N, I, J, scheme):
         self.N = N
@@ -14,7 +12,7 @@ class PDEHnPricing():
         for i in range(self.I):
             for j in range(self.J):
                 α = κ * (θ - v[j]) - λ * σ * np.sqrt(v[j])
-                a = Δt / Δs / Δv * ρ * σ * s[i]* v[j] / 4
+                a = Δt / Δs / Δv * ρ * σ * s[i] * v[j] / 4
                 b = Δt / Δs**2 * v[j] * s[i]**2 / 2
                 c = Δt / Δv**2 * v[j] * σ**2 / 2
                 d = Δt / Δs * (r * s[i] + s[i]**2 * v[j] / 2 / Δs)
@@ -35,8 +33,10 @@ class PDEHnPricing():
         L = np.zeros((len(s), len(v)))
         for i in range(1, len(s)):
             for j in range(1, len(v)):
-                K = s[j] * (1 + pK)
+                K = s[i] * (1 + pK)
                 L[i, j] = self.price_call(s[i], K, T, v[j], r, σ, ρ, κ, θ, λ, t1)
+                print('s[i]: ',"%.4f"%s[i],',\tvol[j]: ', "%.4f"%np.sqrt(v[j]),',\tK: '"%.4f"%K,',\tL[i, j]: ',"%.4f"%L[i,j])
+            print('--------------------')
         return L
 
     def price_call(self, s0, K, T, v0, r, σ, ρ, κ, θ, λ, t=0):
@@ -44,9 +44,9 @@ class PDEHnPricing():
         t_max = T
         s_min = 0
         s_max = 2 * s0
-        #s_max = K * np.exp(8 * np.sqrt(v0) * np.sqrt(T))
+        #s_max = s0 * np.exp(8 * np.sqrt(v0 * T))
         v_min = 0
-        v_max = v0 * np.exp(8 * σ * np.sqrt(T))
+        #v_max = v0 * np.exp(1 * σ * np.sqrt(T))
         v_max = 2 * v0
         τ = np.linspace(t_min, t_max, self.N)
         s = np.linspace(s_min, s_max, self.I)
@@ -80,10 +80,10 @@ class PDEHnPricing():
         t_min = 0
         t_max = T
         s_min = 0
-        s_max = 2 * K
+        s_max = 2 * s0
         #s_max = K * np.exp(8 * np.sqrt(v0) * np.sqrt(T))
         v_min = 0
-        v_max = v0 * np.exp(8 * σ * np.sqrt(T))
+        #v_max = v0 * np.exp(8 * σ * np.sqrt(T))
         v_max = 2 * v0
         τ = np.linspace(t_min, t_max, self.N)
         s = np.linspace(s_min, s_max, self.I)
@@ -117,9 +117,9 @@ class PDEHnPricing():
 
 if __name__ == '__main__':
     scheme = 'explicit'
-    N  = 10
-    I  = 5
-    J  = 4
+    N  = 1000
+    I  = 20
+    J  = 20
     s0 = 100
     K  = 100
     T  = 1
@@ -131,7 +131,7 @@ if __name__ == '__main__':
     θ  = .04
     λ  = 0
     pK = 0
-    t1 = .2
+    t1 = 0
 
     pde = PDEHnPricing(N, I, J, scheme)
     p = pde.price_call(s0, K, T, v0, r, σ, ρ, κ, θ, λ)
